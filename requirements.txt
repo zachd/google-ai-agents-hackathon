@@ -1,0 +1,5 @@
+google-adk
+fastapi
+uvicorn
+python-dotenv
+python-multipart
