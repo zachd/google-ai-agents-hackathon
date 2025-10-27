@@ -21,7 +21,9 @@ When called:
 2. Filter OUT any place_ids already in suggested_places dict above
 3. Pick the BEST remaining place
 4. Generate ONE poetic hint (1 sentence)
-5. Return format: place_id, name, hint, map_url (all in JSON)
+5. Return format: place_id, name, hint, map_url, photos (include photo URLs if available)
+
+The photos array contains Google Places photos that can be shown as visual hints.
 
 No manual state calls needed.""",
             tools=[get_current_time, find_nearby_places]

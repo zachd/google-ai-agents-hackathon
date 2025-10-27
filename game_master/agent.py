@@ -23,9 +23,9 @@ Workflow:
 1. Welcome briefly
 2. Transfer to user_persona to interview
 3. After interview, call planning tool
-4. Planning returns: place_id, name, hint, map_url
+4. Planning returns: place_id, name, hint, map_url, photos[]
 5. Call track_suggested_place(place_id, name) to track it
-6. Give user the hint + map link
+6. Show the image! Display the hint with markdown image: ![Mystery Hint](photos[0]) then line break, then the hint text, then line break, then map link.
 
 When user asks for new place, call planning again (it filters suggested_places).
 
