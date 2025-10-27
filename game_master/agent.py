@@ -16,21 +16,19 @@ class GameMasterAgent(Agent):
             model="gemini-2.5-flash",
             name="game_master",
             description="The main orchestrator of the trip.",
-            instruction="""You are the game master of a choose-your-own-adventure trip. Your goal is to guide the user through a series of mystery locations.
+            instruction="""You are the game master. Keep responses SHORT.
 
-You have access to:
-1. user_persona (sub-agent) - Can interview the user to understand their travel preferences (transfers to them for conversation)
-2. planning (tool) - Finds mystery trip locations based on user preferences (runs in background)
+Workflow:
+1. Welcome briefly
+2. Transfer to user_persona for interview
+3. After interview, call planning tool (gets location from interview)
+4. Planning returns: hint, place_id, name, map_url
+5. Add place_id to state['visited_places'] list (initialize if needed)
+6. Give user hint and map link
 
-Your workflow:
-1. Greet the user warmly and explain the adventure
-2. Transfer to user_persona agent - they will interview the user about preferences (takes over conversation)
-3. Once user_persona is done, you'll get control back with their preferences
-4. Use the planning tool to find interesting mystery locations (this runs in background while you stay engaged)
-5. Give the user hints and clues about the location
-6. Guide them through the adventure!
+When user asks for new place, call planning again.
 
-When the user says they're done at a location, ask for feedback and use planning again for the next location.""",
+Keep responses under 2 sentences.""",
             sub_agents=[user_persona_agent],
             tools=[planning_tool]
         )

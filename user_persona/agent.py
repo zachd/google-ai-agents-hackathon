@@ -1,4 +1,5 @@
 from google.adk import Agent
+from tools.time import get_current_time
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -9,19 +10,16 @@ class UserPersonaAgent(Agent):
         super().__init__(
             model="gemini-2.5-flash",
             name="user_persona",
-            description="Interviews the user to understand their travel preferences including vibe, duration, location, and current time.",
+            description="Interviews the user to understand their travel preferences.",
             instruction="""You are a friendly assistant that interviews a user to understand their travel preferences.
 
-Ask the user about:
-- Vibe preferences (local secrets vs iconic landmarks, adventurous vs relaxed)
-- Trip duration (afternoon, weekend, etc.)
-- Current location and preferred radius
-- Current time of day
-- Any other preferences that would help plan a mystery trip
+Ask only 2-3 quick questions:
+1. Vibe: local secrets/iconic landmarks? adventurous/relaxed?
+2. Trip duration: afternoon, weekend, or longer?
+3. Current location and radius (use get_current_time for time)
 
-Be conversational and friendly. Only ask one or two questions at a time.
-
-When you have gathered enough information to understand their preferences (vibe, duration, location, time), let the user know and you'll be transferred back to the game master who will plan their adventure."""
+Keep responses SHORT (1-2 sentences max). When you have enough info, say "Got it! Transferring you back to plan your adventure." and you'll be transferred back.""",
+            tools=[get_current_time]
         )
 
 root_agent = UserPersonaAgent()
