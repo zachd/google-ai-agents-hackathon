@@ -78,25 +78,119 @@ If you prefer manual setup:
 
 ## Available Make Commands
 
-- `make setup` - Complete setup (venv + dependencies + .env)
+- `make all` or `make` - Complete setup and show next steps (default)
+- `make setup` - Create venv, install dependencies, and create .env
 - `make venv` - Create virtual environment only
-- `make install` - Install dependencies
-- `make run` - Start the ADK server
+- `make install` - Install dependencies in existing venv
+- `make run` - Start the ADK server on port 8081
 - `make clean` - Remove virtual environment
-- `make help` - Show available commands
+- `make help` - Show all available commands
 
 ## Project Structure
 
 ```
 .
 ├── game_master/       # Game master agent implementation
+│   ├── __init__.py
+│   └── agent.py       # Main orchestrator agent
 ├── user_persona/      # User persona agent
+│   ├── __init__.py
+│   └── agent.py       # User interview agent
 ├── planning/          # Planning agent
+│   ├── __init__.py
+│   └── agent.py       # Trip planning agent
 ├── tools/             # Custom tools
+│   ├── __init__.py
+│   ├── time.py        # Time-related tools
+│   └── places.py      # Google Places API integration
+├── evals/             # Evaluation scenarios
+│   ├── README.md                    # Evaluation documentation
+│   ├── game_master_scenarios.json   # Game master tests
+│   ├── user_persona_scenarios.json  # User persona tests
+│   ├── planning_scenarios.json      # Planning tests
+│   └── integrated_scenarios.json    # End-to-end tests
 ├── requirements.txt   # Python dependencies
 ├── Makefile          # Build automation
-└── .env              # Environment variables (not in git)
+├── .env              # Environment variables (not in git)
+└── .env.example      # Environment template
 ```
+
+## Agent Evaluation & Testing
+
+This project includes a comprehensive evaluation framework with **26 detailed test scenarios** documenting expected agent behaviors.
+
+### Test Documentation
+
+The `evals/` directory contains detailed test scenarios for:
+
+- **Game Master Agent** (5 scenarios) - Orchestration, guidance, error handling
+- **User Persona Agent** (7 scenarios) - Interview flow, preference gathering
+- **Planning Agent** (8 scenarios) - Location search, hint generation, tool usage
+- **Integrated System** (6 scenarios) - End-to-end user journeys
+
+### Using the Test Scenarios
+
+#### Game Master Agent
+- Initial greeting and adventure explanation
+- Multi-agent workflow orchestration
+- Location completion handling
+- Adventure guidance and hints
+- Error recovery
+
+#### User Persona Agent
+- Friendly interview initiation
+- Vibe preference gathering
+- Location and duration collection
+- Time awareness
+- Proper conversation pacing
+- Handoff back to game master
+
+#### Planning Agent
+- Location search using Google Places API
+- Mysterious hint generation
+- Time-aware recommendations
+- Preference matching
+- GPS coordinate inclusion
+- Local vs tourist differentiation
+- Distance constraint handling
+
+#### Integrated System
+- Complete user journey flows
+- Multi-location adventures
+- Preference refinement based on feedback
+- Help during location search
+- Time-based suggestions
+- System-wide error recovery
+
+Each test scenario provides:
+- **Test name** and description
+- **Sample conversation** to simulate
+- **Expected behaviors** to validate
+- **Coverage** of edge cases and error scenarios
+
+### Manual Testing Guide
+
+Use the test scenarios as a checklist when testing your agents:
+
+1. **Start the web interface**: `make run`
+2. **Open** `evals/game_master_scenarios.json` (or other test files)
+3. **Test each scenario** by simulating the conversations
+4. **Verify** the expected behaviors are present
+5. **Document** any issues found
+
+For complete evaluation documentation, see [`evals/README.md`](evals/README.md).
+
+## Development Workflow
+
+1. **Make changes** to agent code
+2. **Test manually** using the evaluation scenarios as a guide:
+   ```bash
+   make run
+   # Follow test scenarios in evals/ directory
+   ```
+3. **Verify** expected behaviors from the test documentation
+4. **Add new test scenarios** for new features
+5. **Commit** your changes
 
 ## Security Note
 

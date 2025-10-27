@@ -1,0 +1,127 @@
+{
+  "scenarios": [
+    {
+      "name": "basic_location_search",
+      "description": "Test basic location finding with clear preferences",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Find me a mystery location for someone who loves adventurous local secrets in San Francisco within 10 miles"
+        }
+      ],
+      "expected_behaviors": [
+        "Uses find_nearby_places tool",
+        "Searches based on adventurous and local preferences",
+        "Returns a specific location with details"
+      ]
+    },
+    {
+      "name": "mysterious_hint_generation",
+      "description": "Test generation of poetic, mysterious hints",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Create a mystery hint for a location you've found"
+        }
+      ],
+      "expected_behaviors": [
+        "Generates poetic hint",
+        "Hint is mysterious but not too obvious",
+        "Maintains intrigue and curiosity",
+        "Doesn't directly name the location"
+      ]
+    },
+    {
+      "name": "time_awareness",
+      "description": "Test awareness of current time for planning",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Find a mystery location suitable for right now"
+        }
+      ],
+      "expected_behaviors": [
+        "Uses get_current_time tool",
+        "Considers time of day in recommendations",
+        "Suggests time-appropriate locations"
+      ]
+    },
+    {
+      "name": "preference_matching",
+      "description": "Test matching locations to specific user preferences",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Find a relaxing, iconic landmark location in New York for a weekend afternoon"
+        }
+      ],
+      "expected_behaviors": [
+        "Searches for relaxing locations",
+        "Filters for iconic landmarks",
+        "Considers afternoon timing",
+        "Returns location matching all criteria"
+      ]
+    },
+    {
+      "name": "gps_coordinates_inclusion",
+      "description": "Test that GPS coordinates are included for navigation",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Find me a location and provide navigation details"
+        }
+      ],
+      "expected_behaviors": [
+        "Includes GPS coordinates in response",
+        "Provides latitude and longitude",
+        "Formats coordinates for easy use"
+      ]
+    },
+    {
+      "name": "local_vs_tourist_differentiation",
+      "description": "Test ability to differentiate between local secrets and tourist spots",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Find me a local secret spot, not a touristy place, in Chicago"
+        }
+      ],
+      "expected_behaviors": [
+        "Searches for less-known locations",
+        "Avoids major tourist attractions",
+        "Highlights local character of chosen spot"
+      ]
+    },
+    {
+      "name": "radius_constraint_handling",
+      "description": "Test handling of distance/radius constraints",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Find a location within 5 miles of downtown Seattle"
+        }
+      ],
+      "expected_behaviors": [
+        "Respects 5-mile radius constraint",
+        "Uses find_nearby_places with correct radius",
+        "Returns location within specified distance"
+      ]
+    },
+    {
+      "name": "no_results_handling",
+      "description": "Test handling when no suitable locations are found",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Find an underwater castle in the desert within 1 mile"
+        }
+      ],
+      "expected_behaviors": [
+        "Gracefully handles impossible request",
+        "Suggests alternatives",
+        "Maintains helpful tone",
+        "May ask for adjusted criteria"
+      ]
+    }
+  ]
+}

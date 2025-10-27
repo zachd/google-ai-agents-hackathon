@@ -1,4 +1,4 @@
-google-adk
+google-adk[eval]
 fastapi
 uvicorn
 python-dotenv
