@@ -55,8 +55,11 @@ def find_nearby_places(query: str, location: Optional[str] = None, radius: int =
             # Get photos if available
             photos = []
             for photo in place.get("photos", [])[:2]:  # First 2 photos
-                photo_url = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference={photo.get('photo_reference')}&key={api_key}"
-                photos.append(photo_url)
+                # Use the photo_reference to get the photo URL
+                # Note: Google Places photos require a valid photo_reference
+                if photo.get('photo_reference'):
+                    photo_url = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference={photo.get('photo_reference')}&key={api_key}"
+                    photos.append(photo_url)
             
             # Build map URL using GPS coordinates
             lat = location_data.get("lat")
@@ -74,7 +77,7 @@ def find_nearby_places(query: str, location: Optional[str] = None, radius: int =
                 "rating": place.get("rating"),
                 "types": place.get("types", []),
             })
-        
+        print(results);
         return {"places": results, "count": len(results)}
         
     except requests.exceptions.RequestException as e:
