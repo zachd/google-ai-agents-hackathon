@@ -30,15 +30,18 @@ Adventure style: {adventure_type}
 
 The image should be:
 - Photorealistic or realistic digital art, NOT cartoonish
-- Feature a clearly visible person as the central subject (full or upper body visible)
-- The person should be in the foreground, clearly visible
-- Subtly reference the location vibe without showing the location name
-- Match the adventure type ({adventure_type} style)
+- Show a person from behind (back turned), showing their silhouette/outline - NO FACE visible, NO gender identifiable
+- The person should be dressed appropriately for the adventure type ({adventure_type}):
+  * adventurous: hiking gear, backpack, outdoor clothing
+  * chill: casual, comfortable clothing for urban exploration
+- The person should be looking at the location/setting shown in the background
+- Subtly show the location vibe in the background without revealing the name
+- Match the adventure style in clothing and pose
 - Colorful, atmospheric, and engaging
-- Suitable as a welcome greeting image
 - Professional travel/adventure photography style
 - No abstract symbols, question marks, or icons
-- Clean, focused composition with the person as the main element"""
+- No text on the image
+- Clean, focused composition showing a mysterious silhouette person (back to camera) looking at the destination"""
         
         # Call Gemini to generate the image using gemini-2.5-flash-image model
         response = client.models.generate_content(
