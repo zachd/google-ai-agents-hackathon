@@ -4,4 +4,4 @@ install:
 	pip install -r requirements.txt
 
 run:
-	PYTHONPATH=. ./venv/bin/adk web agents
+	./venv/bin/adk web game_master user_persona planning
