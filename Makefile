@@ -4,4 +4,4 @@ install:
 	pip install -r requirements.txt
 
 run:
-	./venv/bin/adk web agents
+	PYTHONPATH=. ./venv/bin/adk web agents

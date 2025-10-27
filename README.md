@@ -23,12 +23,6 @@ This project is a submission for the Google AI Agents Hackathon.
     pip install -r requirements.txt
     ```
 
-3.  **Install the Agent Development Kit (ADK):**
-
-    ```bash
-    pip install adk
-    ```
-
 ## Running the project
 
 To run the ADK server, use the following command:
