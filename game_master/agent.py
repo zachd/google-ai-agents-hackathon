@@ -1,7 +1,7 @@
 from google.adk import Agent
 from google.adk.tools.agent_tool import AgentTool
-from agents.user_persona.agent import root_agent as user_persona_agent
-from agents.planning.agent import root_agent as planning_agent
+from user_persona.agent import root_agent as user_persona_agent
+from planning.agent import root_agent as planning_agent
 from dotenv import load_dotenv
 
 load_dotenv()
