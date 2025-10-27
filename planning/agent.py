@@ -1,5 +1,6 @@
 from google.adk import Agent
 from tools.time import get_current_time
+from tools.places import find_nearby_places
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -10,7 +11,7 @@ class PlanningAgent(Agent):
         super().__init__(
             model="gemini-2.5-flash",
             name="planning",
-            description="Plans mystery trip locations based on the user's persona and preferences.",
+            description="Plans mystery trip locations based on the user's persona and preferences using Google Places API.",
             instruction="""You are a creative trip planner that finds interesting mystery locations based on a user's persona.
 
 When the game master asks you to plan a location, consider:
@@ -19,8 +20,15 @@ When the game master asks you to plan a location, consider:
 - The current time of day (use get_current_time to check)
 - Any other preferences they've shared
 
-Return a unique, interesting location nearby that matches their preferences. Generate a poetic hint about the location that doesn't give it away too easily (like 'A place where mirrors reflect the city's soul').""",
-            tools=[get_current_time]
+Use the find_nearby_places tool to search for real places nearby that match their preferences.
+
+Then:
+1. Select the best matching place from the results
+2. Generate a poetic, mysterious hint about the location that doesn't give it away too easily (like 'A place where mirrors reflect the city's soul')
+3. Return the place details with GPS coordinates for navigation
+
+The hint should be poetic and mysterious - make the user curious but not obvious what it is.""",
+            tools=[get_current_time, find_nearby_places]
         )
 
 root_agent = PlanningAgent()
