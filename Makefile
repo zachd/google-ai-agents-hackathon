@@ -17,12 +17,16 @@ all: setup ## Complete setup and show next steps (default target)
 
 help: ## Show this help message
 	@echo "Available targets:"
-	@echo "  make all      - Complete setup and show next steps (default)"
-	@echo "  make setup    - Create venv and install all dependencies"
-	@echo "  make venv     - Create virtual environment only"
-	@echo "  make install  - Install dependencies in existing venv"
-	@echo "  make run      - Run the ADK server with agents"
-	@echo "  make clean    - Remove virtual environment"
+	@echo ""
+	@echo "Setup & Run:"
+	@echo "  make all     - Complete setup and show next steps (default)"
+	@echo "  make setup   - Create venv and install all dependencies"
+	@echo "  make venv    - Create virtual environment only"
+	@echo "  make install - Install dependencies in existing venv"
+	@echo "  make run     - Run the ADK server with agents on port 8081"
+	@echo "  make clean   - Remove virtual environment"
+	@echo ""
+	@echo "Note: See evals/README.md for evaluation test scenarios (documentation format)"
 
 venv: ## Create virtual environment
 	@if [ ! -d "venv" ]; then \

@@ -1,0 +1,120 @@
+{
+  "scenarios": [
+    {
+      "name": "complete_adventure_flow",
+      "description": "Test the complete user journey from start to first location",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Hello! I want to start an adventure."
+        },
+        {
+          "role": "assistant",
+          "content": "Welcome! I'm your game master. Let me transfer you to our persona specialist to understand your preferences."
+        },
+        {
+          "role": "user",
+          "content": "I'm in San Francisco, love adventurous local secrets, have a weekend free, and it's currently 2 PM Saturday."
+        },
+        {
+          "role": "assistant",
+          "content": "Perfect! I have your preferences. Let me find you a mysterious location..."
+        },
+        {
+          "role": "user",
+          "content": "Great! What's my first clue?"
+        }
+      ],
+      "expected_behaviors": [
+        "Game master greets and explains adventure",
+        "Transfers to user_persona for interview",
+        "User_persona gathers all preferences",
+        "Returns to game master with preferences",
+        "Planning finds suitable location",
+        "Game master provides mysterious hint",
+        "Includes GPS coordinates for navigation"
+      ]
+    },
+    {
+      "name": "multi_location_adventure",
+      "description": "Test handling multiple locations in sequence",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I found the first location! It was amazing. What's next?"
+        }
+      ],
+      "expected_behaviors": [
+        "Congratulates on finding location",
+        "Asks for feedback",
+        "Offers to find next mystery location",
+        "Uses planning to find another location",
+        "Provides new mysterious hint"
+      ]
+    },
+    {
+      "name": "preference_refinement",
+      "description": "Test ability to refine preferences based on feedback",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "That location was too touristy. I want something more off the beaten path."
+        }
+      ],
+      "expected_behaviors": [
+        "Acknowledges feedback",
+        "Adjusts preferences toward more local/hidden spots",
+        "Uses planning with refined criteria",
+        "Finds more suitable location"
+      ]
+    },
+    {
+      "name": "help_during_search",
+      "description": "Test providing help when user is stuck finding location",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I've been searching for 20 minutes and can't figure out the hint. Can you help?"
+        }
+      ],
+      "expected_behaviors": [
+        "Provides additional hint without fully revealing",
+        "Maintains mystery and adventure",
+        "Offers progressive hints if needed",
+        "Encourages continued exploration"
+      ]
+    },
+    {
+      "name": "time_based_suggestions",
+      "description": "Test that time of day influences suggestions",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "It's getting late (8 PM now). What should I do next?"
+        }
+      ],
+      "expected_behaviors": [
+        "Planning checks current time",
+        "Suggests evening-appropriate location",
+        "Considers safety and accessibility for night time",
+        "Adjusts recommendations accordingly"
+      ]
+    },
+    {
+      "name": "error_recovery_integration",
+      "description": "Test system recovery when things go wrong",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "The location you suggested is closed."
+        }
+      ],
+      "expected_behaviors": [
+        "Apologizes for the issue",
+        "Quickly finds alternative location",
+        "Maintains engagement and adventure spirit",
+        "Learns from feedback"
+      ]
+    }
+  ]
+}
