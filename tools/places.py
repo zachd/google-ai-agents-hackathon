@@ -1,8 +1,10 @@
 import os
 import requests
 from typing import Dict, Any, Optional, List
+from google.adk.tools import ToolContext
+from google.genai import types
 
-def find_nearby_places(query: str, location: Optional[str] = None, radius: int = 5000, max_results: int = 10) -> Dict[str, Any]:
+async def find_nearby_places(query: str, location: Optional[str] = None, radius: int = 5000, max_results: int = 3, tool_context: ToolContext = None) -> Dict[str, Any]:
     """
     Find nearby places using Google Places API.
     
@@ -10,7 +12,7 @@ def find_nearby_places(query: str, location: Optional[str] = None, radius: int =
         query: The type of place to search for (e.g., "art gallery", "local secrets", "hidden gems")
         location: Optional location string (e.g., "New York, NY"). If not provided, user's current location will be used.
         radius: Search radius in meters (default 5000)
-        max_results: Maximum number of places to return (default 10)
+        max_results: Maximum number of places to return (default 3)
     
     Returns:
         Dictionary with place details including name, address, coordinates, place_id, map_url, and photos.
@@ -40,9 +42,13 @@ def find_nearby_places(query: str, location: Optional[str] = None, radius: int =
         if not place_data.get("results"):
             return {"error": "No places found", "places": []}
         
-        # Return multiple places (up to max_results)
+        # Return multiple places (up to max_results) - ONLY places with photos
         results = []
-        for place in place_data.get("results", [])[:max_results]:
+        for place in place_data.get("results", []):
+            # Skip places without photos
+            if not place.get("photos"):
+                continue
+            
             place_id = place.get("place_id")
             name = place.get("name")
             address = place.get("formatted_address")
@@ -52,14 +58,43 @@ def find_nearby_places(query: str, location: Optional[str] = None, radius: int =
             # Build map URL
             map_url = f"https://www.google.com/maps/place/?q=place_id:{place_id}"
             
-            # Get photos if available
-            photos = []
-            for photo in place.get("photos", [])[:2]:  # First 2 photos
+            # Get photos and download them to artifacts - ONLY if we have photos
+            photo_uris = []
+            for idx, photo in enumerate(place.get("photos", [])[:1]):  # First 1 photo
                 # Use the photo_reference to get the photo URL
                 # Note: Google Places photos require a valid photo_reference
                 if photo.get('photo_reference'):
                     photo_url = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference={photo.get('photo_reference')}&key={api_key}"
-                    photos.append(photo_url)
+                    
+                    # Download the image and save as artifact if tool_context is available
+                    if tool_context:
+                        try:
+                            img_response = requests.get(photo_url)
+                            img_response.raise_for_status()
+                            img_data = img_response.content
+                            
+                            # Save as artifact
+                            filename = f"place_photo_{place_id}_{idx}.jpg"
+                            artifact_part = types.Part(
+                                inline_data=types.Blob(
+                                    data=img_data,
+                                    mime_type="image/jpeg"
+                                )
+                            )
+                            artifact_uri = await tool_context.save_artifact(
+                                filename=filename,
+                                artifact=artifact_part
+                            )
+                            photo_uris.append(filename)  # Return filename for artifact lookup
+                        except Exception as e:
+                            # Fall back to URL if artifact save fails
+                            photo_uris.append(photo_url)
+                    else:
+                        photo_uris.append(photo_url)
+            
+            # Only add this place if we successfully got at least one photo
+            if not photo_uris:
+                continue
             
             # Build map URL using GPS coordinates
             lat = location_data.get("lat")
@@ -73,10 +108,15 @@ def find_nearby_places(query: str, location: Optional[str] = None, radius: int =
                 "lng": lng,
                 "place_id": place_id,
                 "map_url": map_url_gps,
-                "photos": photos,
+                "photos": photo_uris,  # This contains artifact filenames
+                "photo_filename": photo_uris[0] if photo_uris else None,  # First photo filename
                 "rating": place.get("rating"),
                 "types": place.get("types", []),
             })
+            
+            # Stop when we have enough places with photos
+            if len(results) >= max_results:
+                break
         print(results);
         return {"places": results, "count": len(results)}
         
