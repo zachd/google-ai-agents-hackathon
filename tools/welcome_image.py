@@ -54,31 +54,20 @@ The image should be:
             )
         )
         
-        # Extract the image data and save as artifact
+        # Extract the image data and return it directly as inline_data
         for part in response.candidates[0].content.parts:
             if part.inline_data is not None:
-                # Save as ADK artifact using the Blob data directly
+                # Return the image data directly so it appears in the agent response
                 filename = f"welcome_avatar_{location}_{adventure_type}.png"
-                artifact_part = types.Part(
-                    inline_data=types.Blob(
-                        data=part.inline_data.data,
-                        mime_type=part.inline_data.mime_type or "image/png"
-                    )
-                )
-                
-                # Save the artifact (await for async method)
-                artifact_version = await tool_context.save_artifact(
-                    filename=filename,
-                    artifact=artifact_part
-                )
                 
                 return {
                     "status": "Avatar generated successfully",
                     "filename": filename,
-                    "version": artifact_version,
                     "location": location,
                     "adventure_type": adventure_type,
-                    "message": f"Welcome to your {adventure_type} mystery adventure in {location}!"
+                    "message": f"Welcome to your {adventure_type} mystery adventure in {location}!",
+                    "image_data": part.inline_data.data,
+                    "mime_type": part.inline_data.mime_type or "image/png"
                 }
         
         return {"error": "No image data generated"}

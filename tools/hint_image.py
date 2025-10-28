@@ -54,28 +54,18 @@ The result should be a realistic, cohesive image with NO TEXT, showing the avata
             contents=[prompt, avatar_part, place_part],
         )
         
-        # Extract the image data and save as artifact
+        # Extract the image data and return it directly as inline_data
         for part in response.candidates[0].content.parts:
             if part.inline_data is not None:
-                # Save as ADK artifact
+                # Return the image data directly so it appears in the agent response
                 filename = f"hint_image_{hint[:20].replace(' ', '_')}.png"
-                artifact_part = types.Part(
-                    inline_data=types.Blob(
-                        data=part.inline_data.data,
-                        mime_type=part.inline_data.mime_type or "image/png"
-                    )
-                )
-                
-                artifact_version = await tool_context.save_artifact(
-                    filename=filename,
-                    artifact=artifact_part
-                )
                 
                 return {
                     "status": "Hint image generated successfully",
                     "filename": filename,
-                    "version": artifact_version,
-                    "hint": hint
+                    "hint": hint,
+                    "image_data": part.inline_data.data,
+                    "mime_type": part.inline_data.mime_type or "image/png"
                 }
         
         return {"error": "No image data generated"}
