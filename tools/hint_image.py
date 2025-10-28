@@ -38,20 +38,21 @@ async def generate_hint_image(hint: str, avatar_artifact: str, place_image_artif
             return {"error": f"Failed to load place image artifact: {place_image_artifact}"}
         
         # Create the prompt
-        prompt = f"""Create a realistic hint image showing the same person from the first image standing in or near the location shown in the second image.
+        prompt = f"""Create an artistic, interpretive hint image inspired by the person in the first image and the location in the second image.
 
 The hint is: "{hint}"
 
-Combine these images to create a visual hint that:
-- Keeps the same person from the first image (avatar) - their exact appearance and clothing
-- Places this person in or near the actual location/setting from the second image (place photo)
-- Shows the specific details, architecture, or landmarks from the second image as the background
-- Uses the same realistic, photographic style as the first image
-- Creates a mysterious atmosphere by showing where the person is heading
-- Gives visual clues about the destination without being too obvious
-- NO TEXT on the image - just the visual scene
+Transform these images into a mysterious visual clue that:
+- Takes inspiration from the person's style and appearance but shows them in a more poetic, mysterious way
+- Captures the essence and atmosphere of the location from the second image
+- Uses artistic interpretation rather than literal photo combination
+- Creates a dream-like, enigmatic atmosphere that hints at the destination
+- Shows abstract clues like shadows, silhouettes, reflections, or partial views of architecture
+- Suggests the journey or destination through visual metaphor
+- Has a magical, quest-like quality that entices exploration
+- NO TEXT on the image - just the visual mystery
 
-The result should be a realistic, cohesive image with NO TEXT, showing the avatar person at the mystery location."""
+The result should be an artistic, interpretive image with NO TEXT that gives visual clues about the mystery location without being too obvious or literal."""
         
         # Call Gemini to generate the combined hint image using the Parts directly
         response = client.models.generate_content(
