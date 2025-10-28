@@ -43,7 +43,7 @@ class GameMasterAgent(Agent):
 
 **NEW PLACE REQUESTS:**
 - If user says "take me to the next place", "new place", "next location", "skip this one", "different place":
-  - Call planning tool again to get next destination
+  - Call planning tool again
   - The planning tool automatically filters out already suggested places
   - Follow same hint revelation format
 
