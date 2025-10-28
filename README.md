@@ -1,103 +1,143 @@
-# Google AI Agents Hackathon
+# Mystery Trip Planner 🗺️
 
-This project is a submission for the Google AI Agents Hackathon, built with [Google ADK](https://github.com/google/adk-python) (Agent Development Kit).
+A choose-your-own-adventure mystery trip planner powered by Google AI Agents. Chat with AI agents that interview you, then reveal personalized mystery destinations with AI-generated images and map links.
 
-## Features
+**Built with:** [Google ADK](https://github.com/google/adk-python) • Gemini • Google Places API • React
 
-- **Game Master Agent**: Orchestrates the multi-agent system
-- **User Persona Agent**: Manages user profiles and preferences
-- **Planning Agent**: Handles trip planning logic
-- **Custom Tools**: Specialized tools for agent interactions
+---
 
-## Prerequisites
+## 🚀 Quick Start
 
-- Python 3.9+
-- A Google API Key ([Get one here](https://aistudio.google.com/app/apikey))
-
-## Quick Start
-
-### 1. Clone the repository
+### Option A: Docker (Easiest) 🐳
 
 ```bash
-git clone <repository-url>
-cd google-ai-agents-hackathon
+# Just run it!
+make docker
 ```
 
-### 2. Run setup
+**Open:** http://localhost:8082 🎉
+
+> Make sure you have `.env` with your `GOOGLE_API_KEY`
+
+### Option B: Local Development
 
 ```bash
+# 1. Setup
 make setup
+
+# 2. Add your Google API key to .env
+# Get key from: https://aistudio.google.com/app/apikey
+
+# 3. Run everything
+make run-all
 ```
 
-This will:
-- Create a virtual environment
-- Install all dependencies
-- Create a `.env` file from `.env.example`
+**Open:** http://localhost:8082 🎉
 
-### 3. Configure your API key
+---
 
-Edit the `.env` file and add your Google API key:
+## ✨ What It Does
 
+1. **Game Master** welcomes you and transfers to User Persona
+2. **User Persona** asks 2-3 quick questions about your travel vibe
+3. **Planning Agent** finds mystery locations using Google Places API
+4. **AI generates** personalized avatar + hint images with Gemini
+5. **You explore** with cryptic hints and map links!
+
+---
+
+## 📋 Common Commands
+
+**Docker:**
 ```bash
-GOOGLE_API_KEY=your_actual_api_key_here
+make docker         # Build and start (backend + frontend)
+make docker-debug   # Start with ADK web interface (3 services)
+make docker-up      # Start containers
+make docker-down    # Stop containers
+make docker-logs    # View logs
 ```
 
-### 4. Run the server
-
+**Local Development:**
 ```bash
-make run
+make run-all        # Start backend + frontend together
+make run-backend    # Backend only (port 8080)
+make run-frontend   # Frontend only (port 8082)
+make clean          # Clean and start fresh
+python test_integration.py  # Test everything works
 ```
 
-The ADK web interface will be available at `http://localhost:8081`
+---
 
-## Manual Installation (Alternative)
+## 🏗️ Architecture
 
-If you prefer manual setup:
+**Docker Services:**
+- Port 8082: React Frontend (chat UI)
+- Port 8080: FastAPI Backend (ADK agents via Python)
+- Port 8081: ADK Web Interface (optional, for debugging)
 
-1. **Create virtual environment:**
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Configure environment:**
-   ```bash
-   cp .env.example .env
-   # Edit .env and add your Google API key
-   ```
-
-4. **Run the server:**
-   ```bash
-   ./venv/bin/adk web --port 8081 .
-   ```
-
-## Available Make Commands
-
-- `make setup` - Complete setup (venv + dependencies + .env)
-- `make venv` - Create virtual environment only
-- `make install` - Install dependencies
-- `make run` - Start the ADK server
-- `make clean` - Remove virtual environment
-- `make help` - Show available commands
-
-## Project Structure
-
+**Flow:**
 ```
-.
-├── game_master/       # Game master agent implementation
-├── user_persona/      # User persona agent
-├── planning/          # Planning agent
-├── tools/             # Custom tools
-├── requirements.txt   # Python dependencies
-├── Makefile          # Build automation
-└── .env              # Environment variables (not in git)
+Browser → Frontend (8082) → Backend API (8080) → ADK Agents → Gemini + Places
 ```
 
-## Security Note
+**Agents:**
+- 🎮 Game Master - Orchestrates the experience
+- 👤 User Persona - Interviews about preferences
+- 🗺️ Planning - Finds mystery locations
 
-⚠️ **Never commit your `.env` file or API keys to git.** The `.env` file is already in `.gitignore` to prevent accidental commits.
+---
+
+## 🛠️ Troubleshooting
+
+**Docker Issues:**
+```bash
+# Rebuild from scratch
+docker-compose down
+docker-compose build --no-cache
+docker-compose up
+
+# View logs
+docker-compose logs backend
+docker-compose logs frontend
+```
+
+**Local Development Issues:**
+```bash
+# Backend won't start?
+cat .env  # Check API key is set
+lsof -ti:8080 | xargs kill -9
+make run-backend
+
+# Frontend errors?
+cd frontend && npm install
+
+# Test connection
+curl http://localhost:8080/health
+# Should return: {"status":"healthy","service":"mystery-trip-planner"}
+```
+
+---
+
+## 📁 Project Structure
+
+```
+├── game_master/      # Orchestrator agent
+├── user_persona/     # Interview agent
+├── planning/         # Location finding agent
+├── tools/            # Places API, image gen, tracking
+├── frontend/         # React UI
+├── main.py           # FastAPI backend
+└── .env              # Your API key (never commit!)
+```
+
+---
+
+## 📚 More Docs
+
+- Full technical details: `INTEGRATION_SUMMARY.md`
+- Deployment guide: `DEPLOYMENT.md`
+
+---
+
+**Prerequisites:** Python 3.9+ • Node.js • Google API Key  
+**Security:** Never commit `.env` to git (already in `.gitignore`)
