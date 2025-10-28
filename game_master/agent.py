@@ -1,12 +1,22 @@
+# Add parent directory to path FIRST for Cloud Run compatibility
+import sys
+import os
+
+# Get the parent directory (project root) and add to Python path
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+
 from google.adk import Agent
 from google.adk.tools.agent_tool import AgentTool
+from dotenv import load_dotenv
+load_dotenv()
+
 from user_persona.agent import root_agent as user_persona_agent
 from planning.agent import root_agent as planning_agent
 from tools.tracking import track_suggested_place
 from tools.welcome_image import generate_welcome_avatar
 from tools.hint_image import generate_hint_image
-from dotenv import load_dotenv
-load_dotenv()
 
 class GameMasterAgent(Agent):
     """The Quest Master - Your mysterious adventure guide."""

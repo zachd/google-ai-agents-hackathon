@@ -15,12 +15,17 @@ async def generate_welcome_avatar(location: str, adventure_type: str, tool_conte
     Returns:
         Dictionary with avatar info and URI
     """
-    api_key = os.getenv("GOOGLE_API_KEY")
-    if not api_key:
-        return {"error": "GOOGLE_API_KEY not set"}
+    # Check if running in Cloud Run
+    is_cloud_run = os.getenv("K_SERVICE") is not None
     
     try:
-        client = genai.Client(api_key=api_key)
+        if is_cloud_run:
+            # Always use default credentials in Cloud Run
+            client = genai.Client()
+        else:
+            # Use API key for local development
+            api_key = os.getenv("GOOGLE_API_KEY")
+            client = genai.Client(api_key=api_key)
         
         # Create a prompt for the welcome avatar
         prompt = f"""Create a realistic, atmospheric welcome avatar image for a choose-your-own-adventure mystery trip.

@@ -16,12 +16,17 @@ async def generate_hint_image(hint: str, avatar_artifact: str, place_image_artif
     Returns:
         Dictionary with the generated hint image artifact info
     """
-    api_key = os.getenv("GOOGLE_API_KEY")
-    if not api_key:
-        return {"error": "GOOGLE_API_KEY not set"}
+    # Check if running in Cloud Run
+    is_cloud_run = os.getenv("K_SERVICE") is not None
     
     try:
-        client = genai.Client(api_key=api_key)
+        if is_cloud_run:
+            # Always use default credentials in Cloud Run
+            client = genai.Client()
+        else:
+            # Use API key for local development
+            api_key = os.getenv("GOOGLE_API_KEY")
+            client = genai.Client(api_key=api_key)
         
         # Load the images from artifacts (await async load)
         avatar_part = await tool_context.load_artifact(avatar_artifact)
