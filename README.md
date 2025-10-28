@@ -6,7 +6,20 @@ A choose-your-own-adventure mystery trip planner powered by Google AI Agents. Ch
 
 ---
 
-## 🚀 Quick Start (3 Steps)
+## 🚀 Quick Start
+
+### Option A: Docker (Easiest) 🐳
+
+```bash
+# Just run it!
+make docker
+```
+
+**Open:** http://localhost:8082 🎉
+
+> Make sure you have `.env` with your `GOOGLE_API_KEY`
+
+### Option B: Local Development
 
 ```bash
 # 1. Setup
@@ -35,6 +48,16 @@ make run-all
 
 ## 📋 Common Commands
 
+**Docker:**
+```bash
+make docker         # Build and start (backend + frontend)
+make docker-debug   # Start with ADK web interface (3 services)
+make docker-up      # Start containers
+make docker-down    # Stop containers
+make docker-logs    # View logs
+```
+
+**Local Development:**
 ```bash
 make run-all        # Start backend + frontend together
 make run-backend    # Backend only (port 8080)
@@ -47,8 +70,14 @@ python test_integration.py  # Test everything works
 
 ## 🏗️ Architecture
 
+**Docker Services:**
+- Port 8082: React Frontend (chat UI)
+- Port 8080: FastAPI Backend (ADK agents via Python)
+- Port 8081: ADK Web Interface (optional, for debugging)
+
+**Flow:**
 ```
-React Frontend (8082) → FastAPI (8080) → ADK Agents → Gemini + Places API
+Browser → Frontend (8082) → Backend API (8080) → ADK Agents → Gemini + Places
 ```
 
 **Agents:**
@@ -60,23 +89,29 @@ React Frontend (8082) → FastAPI (8080) → ADK Agents → Gemini + Places API
 
 ## 🛠️ Troubleshooting
 
-**Backend won't start?**
+**Docker Issues:**
 ```bash
-# Check API key is set
-cat .env
+# Rebuild from scratch
+docker-compose down
+docker-compose build --no-cache
+docker-compose up
 
-# Restart backend
+# View logs
+docker-compose logs backend
+docker-compose logs frontend
+```
+
+**Local Development Issues:**
+```bash
+# Backend won't start?
+cat .env  # Check API key is set
 lsof -ti:8080 | xargs kill -9
 make run-backend
-```
 
-**Frontend errors?**
-```bash
+# Frontend errors?
 cd frontend && npm install
-```
 
-**Test the connection:**
-```bash
+# Test connection
 curl http://localhost:8080/health
 # Should return: {"status":"healthy","service":"mystery-trip-planner"}
 ```

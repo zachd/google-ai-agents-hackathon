@@ -63,13 +63,17 @@ async def chat_endpoint(request: ChatRequest):
             """Generator function for streaming responses"""
             try:
                 # Get or create session
+                session = None
                 try:
                     session = await session_service.get_session(
                         app_name="mystery-trip-planner",
                         user_id=user_id,
                         session_id=session_id
                     )
-                except:
+                except Exception as e:
+                    print(f"Session not found, creating new: {e}")
+                
+                if session is None:
                     # Session doesn't exist, create it
                     session = await session_service.create_session(
                         state={},
@@ -77,6 +81,9 @@ async def chat_endpoint(request: ChatRequest):
                         user_id=user_id,
                         session_id=session_id
                     )
+                
+                if session is None:
+                    raise Exception("Failed to create or retrieve session")
                 
                 # Create message content
                 content = types.Content(
