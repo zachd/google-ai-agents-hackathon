@@ -1,103 +1,294 @@
-# Google AI Agents Hackathon
+# 🎯 Choose-Your-Adventure Trip Planner
 
-This project is a submission for the Google AI Agents Hackathon, built with [Google ADK](https://github.com/google/adk-python) (Agent Development Kit).
+> **Google AI Agents Hackathon — Creative and Entertainment Category**
 
-## Features
+An AI-powered urban quest system that transforms city exploration into a living, adaptive mystery where every destination is discovered through poetic hints and collaborative AI agents.
 
-- **Game Master Agent**: Orchestrates the multi-agent system
-- **User Persona Agent**: Manages user profiles and preferences
-- **Planning Agent**: Handles trip planning logic
-- **Custom Tools**: Specialized tools for agent interactions
+---
 
-## Prerequisites
+## 🌆 The Experience
+
+Imagine you've just arrived in **Rotterdam**.
+
+You open your phone and a mysterious voice appears:
+
+> *"Greetings, adventurer… I am the Quest Master.  
+> The city hums with secrets — shall we uncover them together?"*
+
+The AI begins by interviewing you through the **Scout** agent, learning your travel style:
+- Are you drawn to whispering alleys or sunlit plazas?
+- Exploring for an afternoon or an entire weekend?
+
+Then, in the background, the **Cartographer** consults Google Maps — finding a nearby hidden gem that matches your vibe.
+
+A poetic clue appears on your screen:
+
+> *"Where mirrors reflect the city's soul,  
+> and glass dances with the afternoon sun..."*
+
+And beneath it — a link to **Google Maps**, but the destination name remains a mystery.
+
+You follow the trail. When you arrive, the Quest Master reappears:
+
+> *"Ah, you've found it! Describe what mysteries your eyes behold…"*
+
+You share feedback, and the system adapts — changing pace, adjusting to weather, time, or even how much you've spent.
+
+**Your trip becomes a dynamic, adaptive game** — powered entirely by AI agents working in harmony.
+
+---
+
+## 🧩 The Architecture
+
+Built as a **multi-agent orchestration** using **Google's Agent Development Kit (ADK)** and deployed on **Cloud Run**.
+
+```mermaid
+graph TD
+    A[🎩 Quest Master] -->|"Summons Scout"| B[🧭 Scout Agent]
+    B -->|"Returns location + vibe"| A
+    A -->|"Generates avatar"| C[🎨 Welcome Image Tool]
+    A -->|"Calls for next place"| D[🗺️ Cartographer Agent]
+    D -->|"Finds nearby places"| E[📍 Places API]
+    E -->|"Returns place data"| D
+    D -->|"Returns: place_id, hint, map_url, photos"| A
+    A -->|"Logs suggestion"| F[📝 Tracking Tool]
+    A -->|"Generates hint scroll"| G[🎨 Hint Image Tool]
+    A -->|"Reveals hint"| H[👤 User]
+    H -->|"Arrives + feedback"| A
+    A -->|"Adapts adventure"| D
+
+    style A fill:#6366f1,stroke:#4f46e5,color:#fff
+    style B fill:#ec4899,stroke:#db2777,color:#fff
+    style D fill:#10b981,stroke:#059669,color:#fff
+    style C fill:#f59e0b,stroke:#d97706,color:#fff
+    style E fill:#f59e0b,stroke:#d97706,color:#fff
+    style F fill:#f59e0b,stroke:#d97706,color:#fff
+    style G fill:#f59e0b,stroke:#d97706,color:#fff
+```
+
+```
+google-ai-agents-hackathon/
+│
+├── game_master/         ← The Quest Master (main orchestrator)
+│   └── agent.py
+│
+├── user_persona/        ← The Scout (collects travel style & vibe)
+│   └── agent.py
+│
+├── planning/            ← The Cartographer (plans next stop)
+│   └── agent.py
+│
+└── tools/               ← Magical utilities
+    ├── hint_image.py        # Generates clue visuals
+    ├── welcome_image.py     # Creates welcome avatar scrolls
+    ├── places.py            # Integrates Google Maps API
+    ├── tracking.py          # Logs visited places
+    └── time.py              # Manages session timing
+```
+
+---
+
+## 🎭 Agent Roles
+
+| Agent | Role | Personality |
+|-------|------|-------------|
+| 🎩 **Quest Master** | The conductor of the adventure — speaks in poetic riddles, orchestrates flow between agents | Wise, mysterious, short-spoken |
+| 🧭 **Scout (User Persona Agent)** | Interviews the traveler, learns vibe, preferences, trip duration | Curious, friendly, energetic |
+| 🗺️ **Cartographer (Planner Agent)** | Finds real destinations via Google Maps, creates hints, filters already-visited places | Logical, precise, mystical |
+
+Each agent uses **Agent-as-a-Tool** to call others, enabling seamless multi-agent collaboration.
+
+---
+
+## ⚙️ Technologies Used
+
+| Technology | Purpose |
+|------------|---------|
+| **Gemini 2.5 Flash (via ADK)** | Reasoning, hint creation, conversation control |
+| **ADK (Agent Development Kit)** | Multi-agent orchestration, tool calling, memory |
+| **Cloud Run** | Agent deployment and scaling |
+| **Google Maps API** | Real-world location search and navigation handoff |
+| **Gemini Image Generation** | Creates magical "scroll" hints and avatars |
+| **Vertex AI** | Session memory and user feedback loops |
+
+---
+
+## 🪄 How It Works
+
+### 1. **Quest Master** greets the adventurer
+> "Greetings, adventurer! I shall summon our Scout to sense your travel spirit."
+
+### 2. **Scout** interviews the traveler
+> "Are you more into hidden cafés or iconic landmarks?"
+
+Learns:
+- Location (city)
+- Adventure type ("whispering alleys" vs "sun-drenched plazas")
+- Trip duration
+
+### 3. **Cartographer** finds destinations
+- Calls `find_nearby_places(location, adventure_type)`
+- Filters out already-suggested places from state
+- Selects best remaining place with photos
+- Creates poetic hint
+
+### 4. **Tools** generate visuals
+- `generate_welcome_avatar(location, adventure_type)` creates magical avatar
+- `generate_hint_image(hint, avatar_filename, place_photo)` creates clue scroll
+- `track_suggested_place(place_id, name)` logs visited places
+
+### 5. **Quest Master** reveals the hint
+```
+"Where mirrors reflect the city's soul, 
+and glass dances with the afternoon sun...
+
+https://www.google.com/maps/search/?api=1&query=51.9086472,4.472727
+
+**Whisper to me when you've reached this hidden realm, 
+and I shall reveal what mysteries await...**"
+```
+
+### 6. User arrives and provides feedback
+Quest Master adapts the adventure based on:
+- Time of day
+- Weather
+- User feedback
+- Budget
+- Travel pace
+
+---
+
+## 🚀 Setup Instructions
+
+### Prerequisites
 
 - Python 3.9+
-- A Google API Key ([Get one here](https://aistudio.google.com/app/apikey))
+- Google Cloud Project with Vertex AI enabled
+- Google Maps API key
 
-## Quick Start
+### Installation
 
-### 1. Clone the repository
-
+1. **Clone the repository**
 ```bash
-git clone <repository-url>
+git clone https://github.com/your-username/google-ai-agents-hackathon.git
 cd google-ai-agents-hackathon
 ```
 
-### 2. Run setup
-
+2. **Create a virtual environment**
 ```bash
-make setup
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-This will:
-- Create a virtual environment
-- Install all dependencies
-- Create a `.env` file from `.env.example`
-
-### 3. Configure your API key
-
-Edit the `.env` file and add your Google API key:
-
+3. **Install dependencies**
 ```bash
-GOOGLE_API_KEY=your_actual_api_key_here
+pip install -r requirements.txt
+cd game_master && pip install -r requirements.txt && cd ..
 ```
 
-### 4. Run the server
-
+4. **Set environment variables**
 ```bash
-make run
+# Create .env file
+GOOGLE_API_KEY=your_api_key_here
+GOOGLE_CLOUD_PROJECT=your_project_id
+GOOGLE_CLOUD_REGION=us-central1
 ```
 
-The ADK web interface will be available at `http://localhost:8081`
-
-## Manual Installation (Alternative)
-
-If you prefer manual setup:
-
-1. **Create virtual environment:**
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Configure environment:**
-   ```bash
-   cp .env.example .env
-   # Edit .env and add your Google API key
-   ```
-
-4. **Run the server:**
-   ```bash
-   ./venv/bin/adk web --port 8081 .
-   ```
-
-## Available Make Commands
-
-- `make setup` - Complete setup (venv + dependencies + .env)
-- `make venv` - Create virtual environment only
-- `make install` - Install dependencies
-- `make run` - Start the ADK server
-- `make clean` - Remove virtual environment
-- `make help` - Show available commands
-
-## Project Structure
-
-```
-.
-├── game_master/       # Game master agent implementation
-├── user_persona/      # User persona agent
-├── planning/          # Planning agent
-├── tools/             # Custom tools
-├── requirements.txt   # Python dependencies
-├── Makefile          # Build automation
-└── .env              # Environment variables (not in git)
+5. **Run the application**
+```bash
+python main.py
 ```
 
-## Security Note
+---
 
-⚠️ **Never commit your `.env` file or API keys to git.** The `.env` file is already in `.gitignore` to prevent accidental commits.
+## 📁 Project Structure
+
+```
+google-ai-agents-hackathon/
+├── main.py                    # Entry point
+├── app.py                     # FastAPI application
+├── requirements.txt           # Root dependencies
+├── game_master/
+│   ├── agent.py              # Quest Master agent
+│   └── requirements.txt       # ADK dependencies
+├── user_persona/
+│   └── agent.py              # Scout agent
+├── planning/
+│   └── agent.py              # Cartographer agent
+└── tools/
+    ├── hint_image.py         # Hint image generation
+    ├── welcome_image.py      # Avatar generation
+    ├── places.py             # Google Maps integration
+    ├── tracking.py           # State management
+    └── time.py              # Time utilities
+```
+
+---
+
+## 🎨 Why It's Cool
+
+✨ **Real-world exploration becomes an evolving narrative**  
+- Every trip is unique and adaptive
+
+🎭 **Agents collaborate like characters in a story**  
+- Quest Master, Scout, and Cartographer work in harmony
+
+🧠 **Live adaptation using context**  
+- Responds to weather, time, budget, and user feedback
+
+🔗 **Seamless multi-agent orchestration**  
+- Gemini, Maps, and Cloud Run work together seamlessly
+
+🎨 **Beautiful hint imagery generated on the fly**  
+- Each destination has a unique magical scroll
+
+---
+
+## 🌍 Future Enhancements
+
+- 🎤 **Speech-to-text interviews** for hands-free travel
+- 👯‍♀️ **Group adventures** with multi-user agent sessions
+- 💰 **Budget-aware path planning** with live updates
+- 📖 **Memory persistence** for ongoing travel journals
+- 🗺️ **Route optimization** based on walking/driving preferences
+- 🌧️ **Weather-aware recommendations** that adapt in real-time
+- 📸 **Photo analysis** to understand what users enjoyed
+
+---
+
+## 🧭 Example Flow
+
+```python
+# Quest Master orchestrates the flow:
+1. Greet → summon Scout
+2. Scout interviews → returns location + vibe
+3. Generate welcome avatar
+4. Call Cartographer → get next destination
+5. Generate hint image
+6. Reveal hint to user
+7. Wait for user to arrive
+8. Collect feedback
+9. Repeat with adapted style
+```
+
+---
+
+## 📝 License
+
+This project is part of the Google AI Agents Hackathon — Creative and Entertainment Category.
+
+---
+
+## 🤝 Acknowledgments
+
+Built with:
+- **Google Agent Development Kit (ADK)** for multi-agent orchestration
+- **Gemini 2.5 Flash** for intelligent reasoning
+- **Google Maps API** for real-world discovery
+- **Cloud Run** for scalable deployment
+
+---
+
+> "Travel shouldn't be planned — it should **unfold**.  
+> Our Choose-Your-Adventure Trip Planner turns the city into a living story,  
+> where every step whispers a new mystery."
