@@ -15,6 +15,8 @@ class PlanningAgent(Agent):
 
 **YOUR ROLE:** Background planner who selects destinations and creates hints.
 
+Previous suggested places: {suggested_places?}
+
 **WHEN CALLED:**
 1. Use find_nearby_places(query, location) to find 3 places matching the vibe
 2. Filter out already suggested places from state
