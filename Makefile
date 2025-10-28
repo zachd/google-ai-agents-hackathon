@@ -1,4 +1,4 @@
-.PHONY: all venv install setup run run-backend run-frontend run-all clean help
+.PHONY: all venv install setup run run-backend run-frontend run-all docker docker-debug docker-build docker-up docker-down docker-logs clean help
 
 # Detect Python command
 PYTHON := $(shell command -v python3 2> /dev/null || command -v python 2> /dev/null)
@@ -7,6 +7,9 @@ PIP := $(VENV_BIN)/pip
 ADK := $(VENV_BIN)/adk
 NODE := $(shell command -v node 2> /dev/null)
 NPM := $(shell command -v npm 2> /dev/null)
+
+# Detect docker-compose command (try new 'docker compose' first, then old 'docker-compose')
+DOCKER_COMPOSE := $(shell docker compose version > /dev/null 2>&1 && echo "docker compose" || echo "docker-compose")
 
 all: setup ## Complete setup and show next steps (default target)
 	@echo ""
@@ -19,15 +22,23 @@ all: setup ## Complete setup and show next steps (default target)
 
 help: ## Show this help message
 	@echo "Available targets:"
-	@echo "  make all         - Complete setup and show next steps (default)"
-	@echo "  make setup       - Create venv and install all dependencies"
-	@echo "  make venv        - Create virtual environment only"
-	@echo "  make install     - Install dependencies in existing venv"
-	@echo "  make run         - Run the ADK server with agents (port 8081)"
-	@echo "  make run-backend - Run FastAPI backend server (port 8080)"
+	@echo "  make all          - Complete setup and show next steps (default)"
+	@echo "  make setup        - Create venv and install all dependencies"
+	@echo "  make venv         - Create virtual environment only"
+	@echo "  make install      - Install dependencies in existing venv"
+	@echo "  make run          - Run the ADK server with agents (port 8081)"
+	@echo "  make run-backend  - Run FastAPI backend server (port 8080)"
 	@echo "  make run-frontend - Run React frontend (port 8082)"
-	@echo "  make run-all     - Run both backend and frontend together"
-	@echo "  make clean       - Remove virtual environment"
+	@echo "  make run-all      - Run both backend and frontend together"
+	@echo ""
+	@echo "Docker commands:"
+	@echo "  make docker       - Build and start (backend + frontend)"
+	@echo "  make docker-debug - Start with ADK web (all 3 services)"
+	@echo "  make docker-up    - Start containers"
+	@echo "  make docker-down  - Stop containers"
+	@echo "  make docker-logs  - View logs"
+	@echo ""
+	@echo "  make clean        - Remove virtual environment"
 
 venv: ## Create virtual environment
 	@if [ ! -d "venv" ]; then \
@@ -101,6 +112,32 @@ run-all: ## Run both backend and frontend together
 	$(VENV_BIN)/python main.py & \
 	cd frontend && npm run dev & \
 	wait
+
+docker-build: ## Build Docker images
+	@$(DOCKER_COMPOSE) build
+
+docker-up: ## Start containers
+	@echo "🐳 Starting containers..."
+	@echo "Backend: http://localhost:8080"
+	@echo "Frontend: http://localhost:8082"
+	@$(DOCKER_COMPOSE) up
+
+docker-down: ## Stop containers
+	@$(DOCKER_COMPOSE) down
+
+docker-logs: ## View logs
+	@$(DOCKER_COMPOSE) logs -f
+
+docker: ## Build and start (one command)
+	@echo "🐳 Building and starting..."
+	@$(DOCKER_COMPOSE) up --build
+
+docker-debug: ## Start with ADK web interface (port 8081)
+	@echo "🐳 Starting with ADK web interface..."
+	@echo "Backend: http://localhost:8080"
+	@echo "Frontend: http://localhost:8082"
+	@echo "ADK Web: http://localhost:8081"
+	@$(DOCKER_COMPOSE) --profile debug up --build
 
 clean: ## Remove virtual environment
 	@echo "Removing virtual environment..."
