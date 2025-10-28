@@ -1,14 +1,15 @@
-# 🎯 Choose-Your-Adventure Trip Planner
+# 🎯 WanderlustAI - A Choose-Your-Adventure Trip Planner
 
 > **Google AI Agents Hackathon — Creative and Entertainment Category**
 
 An AI-powered urban quest system that transforms city exploration into a living, adaptive mystery where every destination is discovered through poetic hints and collaborative AI agents.
 
-
-
+## Demo
 https://github.com/user-attachments/assets/3a5fabc4-9108-4493-9663-28e8894084ba
 
 
+### Presentation
+https://docs.google.com/presentation/d/1tL1aTYEO7nA5zSy9qIJ9G0IH9pQPv7A_94SxRWVcWJ0/
 
 ---
 
