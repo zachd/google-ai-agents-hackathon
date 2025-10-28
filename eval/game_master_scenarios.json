@@ -1,0 +1,80 @@
+{
+  "scenarios": [
+    {
+      "name": "greeting_and_intro",
+      "description": "Test that game master greets user and explains the adventure",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Hello!"
+        }
+      ],
+      "expected_behaviors": [
+        "Greets user warmly",
+        "Explains the choose-your-own-adventure concept",
+        "Mentions mystery locations",
+        "Indicates next steps (interviewing for preferences)"
+      ]
+    },
+    {
+      "name": "orchestration_workflow",
+      "description": "Test that game master properly orchestrates the multi-agent workflow",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I'm ready to start my adventure!"
+        }
+      ],
+      "expected_behaviors": [
+        "Transfers to user_persona agent for preference gathering",
+        "Maintains context throughout the workflow",
+        "Uses planning tool after getting preferences"
+      ]
+    },
+    {
+      "name": "location_completion_handling",
+      "description": "Test how game master handles when user completes a location",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I've found the mystery location! It was amazing."
+        }
+      ],
+      "expected_behaviors": [
+        "Asks for feedback about the location",
+        "Offers to plan next location",
+        "Maintains engagement and adventure tone"
+      ]
+    },
+    {
+      "name": "adventure_guidance",
+      "description": "Test game master's ability to provide hints and guidance",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I got the hint but I'm not sure where to go. Can you help?"
+        }
+      ],
+      "expected_behaviors": [
+        "Provides additional hints without revealing too much",
+        "Maintains mystery and excitement",
+        "Encourages exploration"
+      ]
+    },
+    {
+      "name": "error_recovery",
+      "description": "Test how game master handles unexpected user responses",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I don't want to do this adventure anymore"
+        }
+      ],
+      "expected_behaviors": [
+        "Responds gracefully to user's change of mind",
+        "Offers alternatives or asks if they want to try later",
+        "Maintains friendly tone"
+      ]
+    }
+  ]
+}

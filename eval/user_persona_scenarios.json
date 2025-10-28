@@ -1,0 +1,118 @@
+{
+  "scenarios": [
+    {
+      "name": "initial_greeting",
+      "description": "Test user_persona agent's initial interaction",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Hi there!"
+        }
+      ],
+      "expected_behaviors": [
+        "Greets user in a friendly manner",
+        "Explains purpose of the interview",
+        "Asks first question about preferences"
+      ]
+    },
+    {
+      "name": "vibe_preferences_gathering",
+      "description": "Test gathering of vibe preferences",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I want to start my trip interview"
+        },
+        {
+          "role": "assistant",
+          "content": "Great! Let's understand your preferences. What kind of vibe are you looking for?"
+        },
+        {
+          "role": "user",
+          "content": "I prefer adventurous experiences and local secrets over tourist spots"
+        }
+      ],
+      "expected_behaviors": [
+        "Acknowledges vibe preference",
+        "Remembers adventurous and local secrets preference",
+        "Asks follow-up questions naturally"
+      ]
+    },
+    {
+      "name": "location_and_duration_gathering",
+      "description": "Test gathering location, radius, and duration preferences",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I'm in San Francisco and have a weekend available"
+        }
+      ],
+      "expected_behaviors": [
+        "Captures location (San Francisco)",
+        "Captures duration (weekend)",
+        "Asks about preferred radius or distance for travel"
+      ]
+    },
+    {
+      "name": "time_awareness_gathering",
+      "description": "Test gathering current time and time-based preferences",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "It's currently 3 PM on a Saturday"
+        }
+      ],
+      "expected_behaviors": [
+        "Captures time of day information",
+        "May ask about evening vs daytime preferences",
+        "Considers time context for planning"
+      ]
+    },
+    {
+      "name": "conversation_pacing",
+      "description": "Test that agent asks one or two questions at a time",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "Tell me what you need to know"
+        }
+      ],
+      "expected_behaviors": [
+        "Asks maximum 1-2 questions at once",
+        "Maintains conversational flow",
+        "Doesn't overwhelm with too many questions"
+      ]
+    },
+    {
+      "name": "completion_handoff",
+      "description": "Test proper completion and handoff back to game master",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I prefer adventurous local secrets in San Francisco within 20 miles for a weekend trip, and it's currently 2 PM"
+        }
+      ],
+      "expected_behaviors": [
+        "Recognizes all key information has been gathered",
+        "Confirms understanding with user",
+        "Indicates transfer back to game master",
+        "Summarizes preferences collected"
+      ]
+    },
+    {
+      "name": "incomplete_information_handling",
+      "description": "Test handling of vague or incomplete responses",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I want something fun"
+        }
+      ],
+      "expected_behaviors": [
+        "Asks clarifying questions",
+        "Probes for more specific preferences",
+        "Remains friendly and helpful"
+      ]
+    }
+  ]
+}
