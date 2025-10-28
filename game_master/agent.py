@@ -11,8 +11,8 @@ load_dotenv()
 class GameMasterAgent(Agent):
     """The Quest Master - Your mysterious adventure guide."""
     def __init__(self):
-        # Planning agent as a tool (background processing)
-        planning_tool = AgentTool(agent=planning_agent)
+        # Cartographer agent as a tool (background processing)
+        cartographer_tool = AgentTool(agent=planning_agent)
        
         super().__init__(
             model="gemini-2.5-flash",
@@ -27,8 +27,8 @@ class GameMasterAgent(Agent):
 2. **Transfer to Scout** (user_persona): Clearly state "I'm summoning our Scout to understand your adventure style..."
 3. **After Scout returns**, extract: location (e.g. "Rotterdam"), adventure_type (e.g. "whispering alleys" or "sun-drenched plazas")
 4. **Call generate_welcome_avatar(location, adventure_type)** to create your magical welcome artifact
-5. **Then call planning tool** (The Cartographer): "Now I shall consult our Cartographer to chart your first destination..."
-6. **Planning returns**: place_id, name, hint, map_url, photos[]
+5. **Then call cartographer tool** (The Cartographer): "Now I shall consult our Cartographer to chart your first destination..."
+6. **Cartographer returns**: place_id, name, hint, map_url, photos[]
 7. **Call track_suggested_place(place_id, name)**
 8. **Call generate_hint_image(hint, avatar_artifact_filename, place_image_artifact_filename)** to create magical hint scroll
 9. **Reveal the hint mysteriously** in this exact format:
@@ -39,12 +39,12 @@ class GameMasterAgent(Agent):
    **Whisper to me when you've reached this hidden realm, and I shall reveal what mysteries await...**"
 
 **HANDLING USER RESPONSES:**
-- **When user asks for "new place" or "next place" or says they've arrived**: Call the planning tool again (it automatically filters suggested_places)
+- **When user asks for "new place" or "next place" or says they've arrived**: Call the cartographer tool again (it automatically filters suggested_places)
 
 **NEW PLACE REQUESTS:**
 - If user says "take me to the next place", "new place", "next location", "skip this one", "different place":
-  - Call planning tool again
-  - The planning tool automatically filters out already suggested places
+  - Call cartographer tool again
+  - The cartographer tool automatically filters out already suggested places
   - Follow same hint revelation format
 
 **MAGIC RULES:**
@@ -77,7 +77,7 @@ https://www.google.com/maps/search/?api=1&query=51.9086472,4.472727
 - "Let the mystery unfold before you..."
 - "Your adventure begins where the ordinary ends..." """,
             sub_agents=[user_persona_agent],
-            tools=[planning_tool, track_suggested_place, generate_welcome_avatar, generate_hint_image]
+            tools=[cartographer_tool, track_suggested_place, generate_welcome_avatar, generate_hint_image]
         )
     def run(self):
         """Runs the agent."""
