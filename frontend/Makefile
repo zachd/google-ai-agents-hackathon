@@ -25,7 +25,7 @@ help: ## Show this help message
 	@echo "  make install     - Install dependencies in existing venv"
 	@echo "  make run         - Run the ADK server with agents (port 8081)"
 	@echo "  make run-backend - Run FastAPI backend server (port 8080)"
-	@echo "  make run-frontend - Run React frontend (port 8082)"
+	@echo "  make run-frontend- Run React frontend (port 8082)"
 	@echo "  make run-all     - Run both backend and frontend together"
 	@echo "  make clean       - Remove virtual environment"
 
@@ -70,21 +70,21 @@ run-backend: ## Run FastAPI backend server
 		exit 1; \
 	fi
 	@echo "Starting FastAPI backend server on port 8080..."
-	@$(VENV_BIN)/python main.py
+	@python main.py
 
 run-frontend: ## Run React frontend
-	@if [ ! -d "frontend/node_modules" ]; then \
+	@if [ ! -d "node_modules" ]; then \
 		echo "Installing frontend dependencies..."; \
-		cd frontend && npm install; \
+		npm install; \
 	fi
 	@echo "Starting React frontend on port 8082..."
-	@cd frontend && npm run dev
+	@npm run dev
 
 run-all: ## Run both backend and frontend together
 	@echo "🚀 Starting Mystery Trip Planner (Backend + Frontend)"
 	@echo ""
 	@echo "Backend will run on: http://localhost:8080"
-	@echo "Frontend will run on: http://localhost:8082 (or next available port)"
+	@echo "Frontend will run on: http://localhost:8082"
 	@echo ""
 	@echo "Press Ctrl+C to stop both services"
 	@echo ""
@@ -92,14 +92,14 @@ run-all: ## Run both backend and frontend together
 		echo "❌ Error: .env file not found. Run 'make setup' first."; \
 		exit 1; \
 	fi
-	@if [ ! -d "frontend/node_modules" ]; then \
+	@if [ ! -d "node_modules" ]; then \
 		echo "Installing frontend dependencies..."; \
-		cd frontend && npm install; \
+		npm install; \
 	fi
 	@echo "Starting services..."
 	@trap 'kill %1; kill %2' INT; \
-	$(VENV_BIN)/python main.py & \
-	cd frontend && npm run dev & \
+	python main.py & \
+	npm run dev & \
 	wait
 
 clean: ## Remove virtual environment
