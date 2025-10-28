@@ -25,6 +25,9 @@ load_dotenv()
 session_service = InMemorySessionService()
 artifact_service = InMemoryArtifactService()
 
+# Configuration for conversation history management
+MAX_HISTORY_MESSAGES = 20  # Keep last 20 messages to prevent token overflow
+
 app = FastAPI(title="Mystery Trip Planner API", version="1.0.0")
 
 # Enable CORS for frontend access
@@ -44,6 +47,42 @@ class ChatResponse(BaseModel):
     session_id: str
     message: str
     artifacts: Optional[Dict[str, Any]] = None
+
+async def truncate_session_history(session, max_messages: int = MAX_HISTORY_MESSAGES):
+    """
+    Truncate session history to prevent token overflow.
+    Keeps only the most recent messages and a system message if present.
+    """
+    if not session or not hasattr(session, 'history') or not session.history:
+        return session
+    
+    history = session.history
+    
+    # If history is within limits, return as-is
+    if len(history) <= max_messages:
+        return session
+    
+    print(f"Truncating history from {len(history)} to {max_messages} messages")
+    
+    # Keep the first message if it's a system message, then keep the last N messages
+    new_history = []
+    
+    # Check if first message is system/important context
+    if history and hasattr(history[0], 'role') and history[0].role == 'system':
+        new_history.append(history[0])
+        # Keep last (max_messages - 1) messages
+        new_history.extend(history[-(max_messages - 1):])
+    else:
+        # Just keep last max_messages
+        new_history = history[-max_messages:]
+    
+    # Update session history
+    session.history = new_history
+    
+    # Update session in service
+    await session_service.update_session(session)
+    
+    return session
 
 @app.get("/health")
 async def health_check():
@@ -84,6 +123,9 @@ async def chat_endpoint(request: ChatRequest):
                 
                 if session is None:
                     raise Exception("Failed to create or retrieve session")
+                
+                # Truncate session history to prevent token overflow
+                session = await truncate_session_history(session)
                 
                 # Create message content
                 content = types.Content(
@@ -144,6 +186,32 @@ async def chat_endpoint(request: ChatRequest):
                                             yield f"data: {json.dumps(artifact_data)}\n\n"
                                         except Exception as artifact_error:
                                             print(f"Error processing artifact: {artifact_error}")
+                                    
+                                    # Handle function responses that might contain image data
+                                    if hasattr(part, 'function_response') and part.function_response:
+                                        try:
+                                            response_data = part.function_response.response
+                                            # Check if this is a tool response with image data
+                                            if isinstance(response_data, dict) and 'image_data' in response_data:
+                                                mime_type = response_data.get('mime_type', 'image/png')
+                                                image_data = response_data['image_data']
+                                                filename = response_data.get('filename', f"image_{session_id}_{int(asyncio.get_event_loop().time())}.png")
+                                                
+                                                data_b64 = base64.b64encode(image_data).decode('utf-8')
+                                                data_uri = f"data:{mime_type};base64,{data_b64}"
+                                                
+                                                artifact_data = {
+                                                    "session_id": session_id,
+                                                    "type": "artifact",
+                                                    "artifact": {
+                                                        "filename": filename,
+                                                        "mime_type": mime_type,
+                                                        "uri": data_uri
+                                                    }
+                                                }
+                                                yield f"data: {json.dumps(artifact_data)}\n\n"
+                                        except Exception as function_error:
+                                            print(f"Error processing function response: {function_error}")
                     except Exception as event_error:
                         print(f"Error processing event {event_count}: {event_error}")
                         traceback.print_exc()
@@ -176,6 +244,34 @@ async def chat_endpoint(request: ChatRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/clear-session")
+async def clear_session(session_id: str):
+    """Clear conversation history for a session"""
+    try:
+        user_id = "web-user"
+        
+        # Try to get the session
+        try:
+            session = await session_service.get_session(
+                app_name="mystery-trip-planner",
+                user_id=user_id,
+                session_id=session_id
+            )
+            
+            if session:
+                # Clear the history
+                session.history = []
+                await session_service.update_session(session)
+                return {"status": "success", "message": "Session history cleared"}
+            else:
+                return {"status": "not_found", "message": "Session not found"}
+                
+        except Exception as e:
+            return {"status": "not_found", "message": "Session not found"}
+            
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/")
 async def root():
     """Root endpoint with API information"""
@@ -184,7 +280,8 @@ async def root():
         "version": "1.0.0",
         "endpoints": {
             "health": "/health",
-            "chat": "/chat (POST)"
+            "chat": "/chat (POST)",
+            "clear-session": "/clear-session (POST)"
         }
     }
 
