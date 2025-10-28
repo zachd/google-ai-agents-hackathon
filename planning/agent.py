@@ -1,9 +1,10 @@
 from google.adk import Agent
 from tools.time import get_current_time
+from tools.places import find_nearby_places
 from dotenv import load_dotenv
 load_dotenv()
 
-class UserPersonaAgent(Agent):
+class PlanningAgent(Agent):
     """The Scout - Your adventure style detective."""
     def __init__(self):
         super().__init__(
@@ -28,7 +29,7 @@ Ask only 2-3 quick questions with Scout-like charm:
 - Use scout metaphors: "I'm reading your adventure compass...", "Your travel soul speaks volumes..."
 
 **HANDOFF:** Always end with clear transfer back to the Quest Master.""",
-            tools=[get_current_time]
+            tools=[get_current_time, find_nearby_places]
         )
 
-root_agent = UserPersonaAgent()
+root_agent = PlanningAgent()
